@@ -1,0 +1,16 @@
+Esse arquivo originalmente era temporário, mas ele ficará aqui como lembrete durante o desenvolvimento e também para agradecimento do dataset
+Agradecimentos a UNIVESP e a Orientadora do Projeto Integrador
+O Dataset é de R. A. Fisher de 1936, no artigo "The Use of Multiple Measurements in Taxonomic Problems"
+Agradecimentos o UCI Machine Learning e a Kaggle.com pelo dataset
+O dataset pode ser acessado em: https://www.kaggle.com/datasets/uciml/iris
+
+
+
+
+O que foi instalado manualmente através de pip install até agora:
+
+streamlit (Pandas vem junto)
+scikit-learn
+matplotlib
+jupyter
+ipykernel
