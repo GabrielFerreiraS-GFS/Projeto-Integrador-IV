@@ -5,13 +5,6 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from wokwi_client import WokwiClientSync
-import time
-import os
-
-# Primeira parte: Análise de dados de dataset de Iris
-
-st.subheader("Previsão de tipo de Íris de acordo com parâmetros, baseando-se em um dataset")
 
 df = pd.read_csv("iris.csv")
 
@@ -32,6 +25,7 @@ PImodelo.fit(x_treino,y_treino)
 
 # Embaixo é a parte que aparece visível no website, as caixas pra preencher etc
 
+st.title("Prever qual a espécie de Iris estamos vendo")
 st.divider()
 
 Comprimento_Sepala = st.number_input("Digite o comprimento da sépala em CM", 0.1, 8.0, 0.1)
@@ -49,65 +43,3 @@ if st.button("Qual será sua Iris?"):
     previsao = PImodelo.predict(parametros)
     iris_esperada = florzinha.inverse_transform(previsao)[0]
     st.success(f"Olha só, parece que com seus parâmetros, a sua Iris provavelmente seria uma **{iris_esperada}** !")
-
-# Segunda parte: Integração do Wokwi e sua análise de dados -----------------------------------------------------------
-
-
-# Criando o título, e conectando o token do wokwi e id do projeto.
-def wokwi_analise ():
-    st.subheader("Dashboard do Wokwi com IoT e Análise de Dados")
-
-    #token = st.secrets["Wokwi_Token"] #Chave está no Secrets do Streamlit para funcionar melhor
-    token = "wok_MoozVa8jD1OnxgB1A0PxNDj45cpWncCo20baeb57" 
-    # Por motivos de teste,
-    # E como isso é apenas um projeto, a chave vai ficar aqui no código
-    # Sendo usada ou não dependendo do contexto para testes
-    # Mas no streamlit de fato esta rodando pelo secrets
-
-    client = WokwiClientSync(token=token)
-    client.connect()
-
-    json_path = "diagram.json"
-
-    PROJECT_ID = client.upload_file(json_path)
-
-    # PROJECT_ID = 446990024295294977 Guardando pra mais tarde o ID se precisar
-
-    simulacao = client.start_simulation(PROJECT_ID)
-    time.sleep(3)
-
-# Recebimento de Dados do Wokwi
-
-    grafico1 = st.empty()
-    tabela1 = st.empty()
-    st.info("Recebendo dados da simulação")
-
-    dadoWokwi = {"voltage": [], "current": [], "power": [], "energy": []}
-
-    for nao_usada in range(10):
-        linha = simulacao.readline()
-        if linha:
-            try:
-                partes = linha.decode().strip().split(",")
-                if len(partes) == 4:
-                    v, c, p, e = partes
-                    dadoWokwi["voltage"].append(float(v))
-                    dadoWokwi["current"].append(float(c))
-                    dadoWokwi["power"].append(float(p))
-                    dadoWokwi["energy"].append(float(e))
-            except Exception as e:
-                st.warning(f"Oops, algo deu errado no processamento: {e}")
-                continue
-
-
-# Gráficos e Tabelas
-
-        df = pd.DataFrame(dadoWokwi)
-        grafico1.line_chart(df[["voltage","current"]])
-        tabela1.dataframe(df)
-        time.sleep(1)
-
-    simulacao.stop_simulation()
-    st.success("Fim da simulação")
-
-wokwi_analise()

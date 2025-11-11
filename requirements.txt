@@ -3,4 +3,3 @@ scikit-learn
 matplotlib
 jupyter
 ipykernel
-wokwi-client
