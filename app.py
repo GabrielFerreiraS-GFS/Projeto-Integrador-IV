@@ -57,20 +57,21 @@ if st.button("Qual será sua Iris?"):
 def wokwi_analise ():
     st.subheader("Dashboard do Wokwi com IoT e Análise de Dados")
 
-    # Por motivos de teste, e como isso é apenas um projeto, a chave vai ficar aqui no código
+    #token = st.secrets["Wokwi_Token"] #Chave está no Secrets do Streamlit para funcionar melhor
+    token = "wok_MoozVa8jD1OnxgB1A0PxNDj45cpWncCo20baeb57" 
+    # Por motivos de teste,
+    # E como isso é apenas um projeto, a chave vai ficar aqui no código
     # Sendo usada ou não dependendo do contexto para testes
     # Mas no streamlit de fato esta rodando pelo secrets
 
-    #token = st.secrets["Wokwi_Token"] #Chave está no Secrets do Streamlit para funcionar melhor
-    token = "wok_MoozVa8jD1OnxgB1A0PxNDj45cpWncCo20baeb57" 
     client = WokwiClientSync(token=token)
     client.connect()
 
     json_path = "diagram.json"
-    PROJECT_ID = client.upload_file(json_path)
-    st.info(f"ID temporário: {PROJECT_ID}")
 
-    # PROJECT_ID = 446990024295294977 Guardando pra mais tarde o ID se precisar, está aqui apenas para referência
+    PROJECT_ID = client.upload_file(json_path)
+
+    # PROJECT_ID = 446990024295294977 Guardando pra mais tarde o ID se precisar
 
     simulacao = client.start_simulation(PROJECT_ID)
     time.sleep(3)
@@ -83,7 +84,7 @@ def wokwi_analise ():
 
     dadoWokwi = {"voltage": [], "current": [], "power": [], "energy": []}
 
-    for nao_usada in range(100):
+    for nao_usada in range(10):
         linha = simulacao.readline()
         if linha:
             try:
@@ -95,7 +96,7 @@ def wokwi_analise ():
                     dadoWokwi["power"].append(float(p))
                     dadoWokwi["energy"].append(float(e))
             except Exception as e:
-                st.warning(f"Oops, algo deu errado no processamento: {e}") #Ver isso aqui depois
+                st.warning(f"Oops, algo deu errado no processamento: {e}")
                 continue
 
 
